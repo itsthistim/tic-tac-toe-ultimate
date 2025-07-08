@@ -1,6 +1,33 @@
-# Tauri + Vanilla
+# Tauri + Astro
 
-This template should help get you started developing with Tauri in vanilla HTML, CSS and Javascript.
+A simple Tauri application using Astro for the frontend and Rust for the backend, with WebAssembly (WASM) support.
+
+## Installation
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/itsthistim/tic-tac-toe-ultimate.git
+    cd tic-tac-toe-ultimate
+    ```
+
+2. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3. Build the WASM module:
+
+    ```bash
+    wasm-pack build --target web --out-dir src/wasm
+    ```
+
+4. Start the Tauri development server:
+
+    ```bash
+    npm run tauri dev
+    ```
 
 ## Recommended IDE Setup
 
