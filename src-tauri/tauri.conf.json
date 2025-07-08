@@ -13,7 +13,7 @@
 		"withGlobalTauri": true,
 		"windows": [
 			{
-				"title": "tic-tac-toe-ultimate",
+				"title": "Tic Tac Toe Ultimate",
 				"width": 800,
 				"height": 600
 			}
