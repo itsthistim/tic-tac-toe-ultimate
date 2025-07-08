@@ -1,0 +1,20 @@
+{
+	"name": "tic-tac-toe-ultimate",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"scripts": {
+		"dev": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"tauri": "tauri"
+	},
+	"dependencies": {
+		"@tauri-apps/api": "^2.6.0",
+		"astro": "^5.11.0",
+		"astro-icon": "^1.1.5"
+	},
+	"devDependencies": {
+		"@tauri-apps/cli": "^2"
+	}
+}
