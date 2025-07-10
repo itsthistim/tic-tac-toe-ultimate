@@ -1,35 +1,28 @@
 <script lang="ts">
 	import Board from "@/components/Board.svelte";
-	import { checkWin, checkUltimateWinner, type MoveEvent } from "@/lib/utils.ts";
+	import {
+		checkWin,
+		checkUltimateWinner,
+		createEmptyBoard,
+		createEmptyUltimateBoard,
+		type MoveEvent,
+		type UltimateBoards,
+		type Board as BoardType,
+		type CellState,
+		type Player
+	} from "@/lib/utils.ts";
 
 	interface Props {
-		player: "x" | "o";
-		ultimateWinner: "x" | "o" | "draw" | null;
-		updateState: (player: "x" | "o", ultimateWinner: "x" | "o" | "draw" | null) => void;
+		player: Player;
+		ultimateWinner: CellState;
+		updateState: (player: Player, ultimateWinner: CellState) => void;
 	}
 
 	let { player, ultimateWinner, updateState }: Props = $props();
 
+	let boards: UltimateBoards = $state(createEmptyUltimateBoard());
 	let activeBoard: [number, number] | null = $state(null);
-	let boards: ("x" | "o" | null)[][][][] = $state(
-		Array(3)
-			.fill(null)
-			.map(() =>
-				Array(3)
-					.fill(null)
-					.map(() =>
-						Array(3)
-							.fill(null)
-							.map(() => Array(3).fill(null))
-					)
-			)
-	);
-
-	let wonBoards: ("x" | "o" | "draw" | null)[][] = $state(
-		Array(3)
-			.fill(null)
-			.map(() => Array(3).fill(null))
-	);
+	let wonBoards: BoardType = $state(createEmptyBoard());
 
 	function handleMove(event: MoveEvent, boardRow: number, boardCol: number) {
 		let { row, col, player } = event;
@@ -51,7 +44,7 @@
 
 		player = player === "x" ? "o" : "x";
 
-		// update game state for Game
+		// update game state
 		updateState(player, ultimateWinner ?? null);
 	}
 </script>

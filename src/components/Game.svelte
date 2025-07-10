@@ -1,11 +1,12 @@
 <script lang="ts">
 	import StatusBar from "@/components/StatusBar.svelte";
 	import UltimateBoard from "@/components/UltimateBoard.svelte";
+	import { type Player, type CellState } from "@/lib/utils.ts";
 
-	let player: "x" | "o" = $state("x");
-	let winner: "x" | "o" | "draw" | null = $state(null);
+	let player: Player = $state("x");
+	let winner: CellState = $state(null);
 
-	function updateState(newPlayer: "x" | "o", newWinner: "x" | "o" | "draw" | null) {
+	function updateState(newPlayer: Player, newWinner: CellState) {
 		player = newPlayer;
 		winner = newWinner;
 	}

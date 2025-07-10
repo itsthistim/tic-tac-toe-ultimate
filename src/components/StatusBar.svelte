@@ -1,9 +1,10 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
+	import { type Player, type CellState } from "@/lib/utils.ts";
 
 	interface Props {
-		player: "x" | "o";
-		winner: "x" | "o" | "draw" | null;
+		player: Player;
+		winner: CellState;
 	}
 
 	let { player, winner }: Props = $props();

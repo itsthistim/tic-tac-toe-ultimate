@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
-	import { checkWin, type MoveEvent } from "@/lib/utils.ts";
+	import { checkWin, type MoveEvent, type Board, type CellState, type Player } from "@/lib/utils.ts";
 
 	interface Props {
-		board: ("x" | "o" | null)[][];
-		winner: "x" | "o" | "draw" | null;
-		player: "x" | "o";
+		board: Board;
+		winner: CellState;
+		player: Player;
 		isActive: boolean;
 		updateState: (event: MoveEvent) => void;
 	}
