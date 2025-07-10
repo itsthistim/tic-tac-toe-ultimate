@@ -22,7 +22,7 @@
 	}
 </script>
 
-<div class="board-wrapper">
+<div class="board-wrapper {isActive ? `active-${player}` : ''}">
 	<table class="board">
 		<tbody>
 			{#each board as row, rowIndex}
@@ -79,6 +79,15 @@
 	.board-wrapper {
 		position: relative;
 		display: inline-block;
+		transition: background-color 0.2s ease;
+	}
+
+	.board-wrapper.active-x {
+		background-color: rgba(0, 239, 255, 0.2);
+	}
+
+	.board-wrapper.active-o {
+		background-color: rgba(207, 88, 200, 0.2);
 	}
 
 	.board {

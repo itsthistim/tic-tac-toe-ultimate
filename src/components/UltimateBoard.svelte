@@ -47,6 +47,10 @@
 		// update game state
 		updateState(player, ultimateWinner ?? null);
 	}
+
+	function isActive(boardRow: number, boardCol: number): boolean {
+		return !ultimateWinner && !wonBoards[boardRow][boardCol] && (!activeBoard || (activeBoard[0] === boardRow && activeBoard[1] === boardCol));
+	}
 </script>
 
 <table class="board">
@@ -54,20 +58,9 @@
 		{#each boards as row, rowIndex}
 			<tr>
 				{#each row as board, colIndex}
-					<td
-						class="square {rowIndex === 0 ? 'top' : rowIndex === 2 ? 'bottom' : ''} {colIndex === 0 ? 'left' : colIndex === 2 ? 'right' : ''} {!ultimateWinner &&
-						(!activeBoard || (activeBoard[0] === rowIndex && activeBoard[1] === colIndex))
-							? `active-${player}`
-							: ''}"
-					>
+					<td class="square {rowIndex === 0 ? 'top' : rowIndex === 2 ? 'bottom' : ''} {colIndex === 0 ? 'left' : colIndex === 2 ? 'right' : ''}">
 						<div class="board-container">
-							<Board
-								{board}
-								winner={wonBoards[rowIndex][colIndex]}
-								{player}
-								isActive={!ultimateWinner && (!activeBoard || (activeBoard[0] === rowIndex && activeBoard[1] === colIndex))}
-								updateState={(e) => handleMove(e, rowIndex, colIndex)}
-							/>
+							<Board {board} winner={wonBoards[rowIndex][colIndex]} {player} isActive={isActive(rowIndex, colIndex)} updateState={(e) => handleMove(e, rowIndex, colIndex)} />
 						</div>
 					</td>
 				{/each}
@@ -86,15 +79,6 @@
 		width: 150px;
 		height: 150px;
 		padding: 0;
-		transition: background-color 0.2s ease;
-	}
-
-	.square.active-x {
-		background-color: rgba(0, 239, 255, 0.2);
-	}
-
-	.square.active-o {
-		background-color: rgba(207, 88, 200, 0.2);
 	}
 
 	.board-container {
