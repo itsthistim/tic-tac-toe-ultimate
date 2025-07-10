@@ -1,16 +1,10 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-
-import StatusBar from "@/components/StatusBar.svelte";
-import UltimateBoard from "@/components/UltimateBoard.svelte";
-import Board from "@/components/Board.svelte";
+import Game from "@/components/Game.svelte";
 ---
 
 <Layout>
-	<div class="game">
-		<StatusBar client:load />
-		<UltimateBoard client:load />
-	</div>
+	<Game client:load />
 </Layout>
 
 <style>

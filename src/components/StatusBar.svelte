@@ -1,23 +1,28 @@
-<script>
+<script lang="ts">
 	import Icon from "@iconify/svelte";
-	export let currentPlayer = "x";
-	export let gameStatus = "playing";
+
+	interface Props {
+		player: "x" | "o";
+		winner: "x" | "o" | "draw" | null;
+	}
+
+	let { player, winner }: Props = $props();
 </script>
 
 <div class="status-bar">
-	{#if gameStatus === "playing"}
+	{#if !winner}
 		Player
-		{#if currentPlayer === "x"}
+		{#if player === "x"}
 			<span class="x"><Icon icon="ph:x" /></span>
 		{:else}
 			<span class="o"><Icon icon="ph:circle" /></span>
 		{/if}
-	{:else if gameStatus === "x"}
+	{:else if winner === "x"}
 		Player <span class="x"><Icon icon="ph:x" /></span> wins!
-	{:else if gameStatus === "o"}
+	{:else if winner === "o"}
 		Player <span class="o"><Icon icon="ph:circle" /></span> wins!
-	{:else if gameStatus === "draw"}
-		It's a draw!
+	{:else if winner === "draw"}
+		It's a draw! <span class="draw"><Icon icon="ph:minus" /></span>
 	{/if}
 </div>
 
@@ -39,6 +44,12 @@
 
 	.o {
 		color: #cf58c8;
+		font-weight: 500;
+		vertical-align: middle;
+	}
+
+	.draw {
+		color: #8689ab;
 		font-weight: 500;
 		vertical-align: middle;
 	}

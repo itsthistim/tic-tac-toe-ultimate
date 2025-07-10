@@ -1,9 +1,25 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
+	import { checkWin, type MoveEvent } from "@/lib/utils.ts";
 
-	export let board: ("x" | "o" | null)[][];
+	interface Props {
+		board: ("x" | "o" | null)[][];
+		winner: "x" | "o" | "draw" | null;
+		player: "x" | "o";
+		isActive: boolean;
+		updateState: (event: MoveEvent) => void;
+	}
 
-	let winner: "x" | "o" | null = null;
+	let { board, winner = null, player = "x", isActive = true, updateState }: Props = $props();
+
+	function handleMove(row: number, col: number) {
+		if (!isActive || winner || board[row][col]) return;
+
+		board[row][col] = player;
+		winner = checkWin(board);
+
+		updateState({ row, col, player, winner, board });
+	}
 </script>
 
 <div class="board-wrapper">
@@ -18,6 +34,11 @@
 							{rowIndex === board.length - 1 ? 'bottom' : ''}
 							{colIndex === 0 ? 'left' : ''}
 							{colIndex === row.length - 1 ? 'right' : ''}"
+							onclick={() => {
+								if (!board[rowIndex][colIndex] && !winner && isActive) {
+									handleMove(rowIndex, colIndex);
+								}
+							}}
 						>
 							{#if cell === "x"}
 								<div class="x"><Icon icon="ph:x" /></div>
@@ -38,6 +59,8 @@
 					<Icon icon="ph:x" />
 				{:else if winner === "o"}
 					<Icon icon="ph:circle" />
+				{:else if winner === "draw"}
+					<Icon icon="ph:minus" />
 				{/if}
 			</div>
 		</div>
@@ -85,6 +108,11 @@
 
 	.winner-icon.o {
 		color: #cf58c8;
+	}
+
+	.winner-icon.draw {
+		color: #8689ab;
+		opacity: 0.7;
 	}
 
 	.square {
