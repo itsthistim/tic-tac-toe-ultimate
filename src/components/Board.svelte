@@ -108,7 +108,11 @@
 
 	.winner-icon {
 		font-size: 10rem;
-		opacity: 0.9;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 110%;
+		height: 110%;
 	}
 
 	.winner-icon.x {
