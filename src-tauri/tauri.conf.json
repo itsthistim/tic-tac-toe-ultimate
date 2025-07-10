@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schema.tauri.app/config/2",
-	"productName": "tic-tac-toe-ultimate",
+	"productName": "Tic Tac Toe Ultimate",
 	"version": "0.1.0",
 	"identifier": "com.tic-tac-toe-ultimate.app",
 	"build": {
