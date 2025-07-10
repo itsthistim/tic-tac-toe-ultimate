@@ -29,29 +29,33 @@
 
 <style>
 	.status-bar {
-		color: #e2e8f0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
 		font-size: 2rem;
-		font-weight: 300;
-		text-align: center;
-		letter-spacing: 0.02em;
-		margin-bottom: 4rem !important;
+		font-weight: 400;
+		margin-bottom: 3rem !important;
 	}
 
 	.x {
+		display: flex;
+		align-items: center;
 		color: #00efff;
 		font-weight: 500;
-		vertical-align: middle;
 	}
 
 	.o {
+		display: flex;
+		align-items: center;
 		color: #cf58c8;
 		font-weight: 500;
-		vertical-align: middle;
 	}
 
 	.draw {
+		display: flex;
+		align-items: center;
 		color: #8689ab;
 		font-weight: 500;
-		vertical-align: middle;
 	}
 </style>
