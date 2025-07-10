@@ -1,6 +1,6 @@
-# Tauri + Astro
+# Ultimate Tic Tac Toe
 
-A simple Tauri application using Astro for the frontend and Rust for the backend, with WebAssembly (WASM) support.
+A cross-platform Ultimate Tic Tac Toe game built with Astro, Svelte, and Tauri.
 
 ## Installation
 
@@ -17,18 +17,27 @@ A simple Tauri application using Astro for the frontend and Rust for the backend
     npm install
     ```
 
-3. Build the WASM module:
+3. Start the development server:
 
     ```bash
-    wasm-pack build --target web --out-dir src/wasm
+    npm run dev
     ```
 
-4. Start the Tauri development server:
+4. (Optional) Build for Tauri desktop app:
 
     ```bash
     npm run tauri dev
     ```
 
-## Recommended IDE Setup
+## Project Structure
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+-   `src/components/` — Svelte 5 components using modern runes syntax
+-   `src/lib/utils.ts` — Centralized win/draw logic and TypeScript types
+-   `src-tauri/` — Tauri configuration and Rust backend
+-   `src/pages/index.astro` — Main game page
+
+## Game Rules
+
+Ultimate Tic Tac Toe consists of 9 regular tic-tac-toe boards arranged in a 3×3 grid. Players take turns, and the position of their move determines which board the opponent must play in next. Win 3 boards in a row to win the ultimate game!
+
+Read more about the rules on the [Wikipedia page](https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe).
