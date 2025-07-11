@@ -7,7 +7,10 @@
 		"dev": "astro dev",
 		"build": "astro build",
 		"preview": "astro preview",
-		"tauri": "tauri"
+		"tauri": "tauri",
+		"server": "tsx watch src/lib/multiplayer/server.ts",
+		"dev:full": "concurrently \"npm run server\" \"npm run dev\"",
+		"tauri:dev:full": "concurrently \"npm run server\" \"npm run tauri dev\""
 	},
 	"dependencies": {
 		"@astrojs/svelte": "^7.1.0",
@@ -19,9 +22,11 @@
 		"socket.io": "^4.8.1",
 		"socket.io-client": "^4.8.1",
 		"svelte": "^5.35.4",
+		"tsx": "^4.20.3",
 		"typescript": "^5.8.3"
 	},
 	"devDependencies": {
-		"@tauri-apps/cli": "^2"
+		"@tauri-apps/cli": "^2",
+		"concurrently": "^9.2.0"
 	}
 }
