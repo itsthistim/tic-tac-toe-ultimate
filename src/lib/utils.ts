@@ -94,7 +94,9 @@ export function isBoardDraw(board: Board): boolean {
  * @returns A new empty board
  */
 export function createEmptyBoard(): Board {
-	return Array(3).fill(null).map(() => Array(3).fill(null));
+	return Array(3)
+		.fill(null)
+		.map(() => Array(3).fill(null));
 }
 
 /**
