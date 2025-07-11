@@ -14,19 +14,19 @@ A cross-platform Ultimate Tic Tac Toe game built with Astro, Svelte, and Tauri.
 2. Install dependencies:
 
     ```bash
-    npm install
+    pnpm install
     ```
 
 3. Start the development server:
 
     ```bash
-    npm run dev
+    pnpm run dev
     ```
 
 4. (Optional) Build for Tauri desktop app:
 
     ```bash
-    npm run tauri dev
+    pnpm run tauri dev
     ```
 
 ## Project Structure
