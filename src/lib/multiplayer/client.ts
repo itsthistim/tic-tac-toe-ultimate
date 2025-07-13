@@ -1,17 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import type { Player } from "../utils";
-
-export interface Room {
-	roomId: string;
-	playerCount: number;
-	playerType: Player;
-	isGameReady: boolean;
-}
-
-export interface GameState {
-	currentPlayer: Player;
-	winner: Player | "draw" | null;
-}
+import type { Room, RoomMember, Player, UltimateBoard } from "../utils";
 
 export class MultiplayerClient {
 	private socket: Socket;
@@ -29,6 +17,7 @@ export class MultiplayerClient {
 		});
 
 		this.socket.on("connect_error", (error) => {
+			this.connected = false;
 			console.error("Client: Connection error:", error);
 		});
 	}
@@ -41,16 +30,32 @@ export class MultiplayerClient {
 		this.socket.emit("join-room", roomId);
 	}
 
-	onRoomJoined(callback: (data: Room) => void): void {
-		this.socket.on("room-joined", callback);
+	onRoomJoined(callback: (data: RoomMember & { room: Room }) => void): void {
+		this.socket.on("joined-room", callback);
 	}
 
-	onPlayerJoined(callback: (data: { playerId: string; playerCount: number }) => void): void {
+	onPlayerJoined(callback: (data: Room) => void): void {
 		this.socket.on("player-joined", callback);
 	}
 
-	onGameStateUpdated(callback: (data: GameState) => void): void {
-		this.socket.on("game-state-updated", callback);
+	makeMove(roomId: string, boardRow: number, boardCol: number, row: number, col: number): void {
+		this.socket.emit("make-move", { roomId, boardRow, boardCol, row, col });
+	}
+
+	onMoveMade(callback: (data: {
+		roomId: string;
+		boardRow: number;
+		boardCol: number;
+		row: number;
+		col: number;
+		player: Player;
+		boardWinner: Player | "draw" | null;
+		currentPlayer: Player;
+		winner: Player | "draw" | null;
+		board: UltimateBoard;
+		activeBoard: [number, number] | null;
+	}) => void): void {
+		this.socket.on("move-made", callback);
 	}
 
 	disconnect(): void {

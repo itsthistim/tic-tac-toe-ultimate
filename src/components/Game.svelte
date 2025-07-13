@@ -1,104 +1,139 @@
 <script lang="ts">
 	import StatusBar from "@/components/StatusBar.svelte";
 	import UltimateBoard from "@/components/UltimateBoard.svelte";
-	import { type Player, type CellState } from "@/lib/utils.ts";
-	import { MultiplayerClient, type Room, type GameState } from "@/lib/multiplayer/client.ts";
+	import GameModeSelector from "@/components/GameModeSelector.svelte";
+	import type { Player, CellState, Room, RoomMember, UltimateBoard as UltimateBoardType } from "@/lib/utils.ts";
+	import { MultiplayerClient } from "@/lib/multiplayer/client.ts";
+	import { createEmptyUltimateBoard } from "@/lib/utils.ts";
 
-	let player: Player = $state("x");
+	let multiplayerClient: MultiplayerClient | null = $state(null);
+	let gameMode: "singleplayer" | "multiplayer" = $state("singleplayer");
+
+	// Game state
+	let player: Player | null = $state("x");
 	let winner: CellState = $state(null);
-	let multiplayerClient = new MultiplayerClient();
+	let gameBoard: UltimateBoardType = $state(createEmptyUltimateBoard());
+	let activeBoard: [number, number] | null = $state(null);
 
-	let roomInfo: Room | null = $state(null);
-	let gameState: GameState | null = $state(null);
-	let roomID: string = $state("");
+	// Multiplayer
+	let room: Room | null = $state(null);
+	let roomID: Room["roomId"] = $state("");
+	let playerType: Player | null = $state(null);
 	let isInRoom: boolean = $state(false);
-	let myPlayerType: Player = $state("x");
+	let isConnected: boolean = $state(false);
 
-	function updateState(newPlayer: Player, newWinner: CellState) {
-		// Only allow moves if in a room and game is ready
-		if (!isInRoom || !roomInfo?.isGameReady) {
-			return;
+	function initMultiplayer() {
+		if (!multiplayerClient) {
+			multiplayerClient = new MultiplayerClient();
+			setupMultiplayerEvents();
+		}
+	}
+
+	function setupMultiplayerEvents() {
+		if (!multiplayerClient) return;
+
+		multiplayerClient.onPlayerJoined((updatedRoom: Room) => {
+			room = updatedRoom;
+		});
+
+		multiplayerClient.onMoveMade((moveData) => {
+			if (room) {
+				gameBoard = moveData.board;
+				activeBoard = moveData.activeBoard;
+				player = moveData.currentPlayer;
+				winner = moveData.winner;
+				room.currentPlayer = moveData.currentPlayer;
+				room.winner = moveData.winner;
+				room.board = moveData.board;
+				room.activeBoard = moveData.activeBoard;
+			}
+		});
+	}
+
+	function handleMultiplayerMove(boardRow: number, boardCol: number, row: number, col: number) {
+		// check if the move is valid
+		if (!room || !playerType || room.currentPlayer !== playerType || room.winner || !multiplayerClient) {
+			return false;
 		}
 
-		// Only allow the current player to make moves (check against game state)
-		if (gameState && gameState.currentPlayer !== myPlayerType) {
-			return;
+		multiplayerClient.makeMove(room.roomId, boardRow, boardCol, row, col);
+		return true;
+	}
+
+	function handleJoinRoom(roomId: Room["roomId"]) {
+		if (!roomId.trim()) {
+			return alert("Please enter a room name.");
 		}
 
+		if (!multiplayerClient) {
+			initMultiplayer();
+		}
+		multiplayerClient?.joinRoom(roomId.trim());
+	}
+
+	function handleLeaveRoom() {
+		multiplayerClient?.disconnect();
+		isInRoom = false;
+		room = null;
+		playerType = null;
+		resetGame();
+	}
+
+	function resetGame() {
+		gameBoard = createEmptyUltimateBoard();
+		activeBoard = null;
+		player = "x";
+		winner = null;
+	}
+
+	function switchToSingleplayer() {
+		gameMode = "singleplayer";
+		isInRoom = false;
+		room = null;
+		playerType = null;
+		resetGame();
+	}
+
+	function switchToMultiplayer() {
+		gameMode = "multiplayer";
+		initMultiplayer();
+	}
+
+	function handleRoomIdChange(newRoomId: string) {
+		roomID = newRoomId;
+	}
+
+	function updateState(newPlayer: Player | null, newWinner: CellState) {
 		player = newPlayer;
 		winner = newWinner;
 	}
-
-	function handleJoinRoom() {
-		if (roomID.trim()) {
-			multiplayerClient.joinRoom(roomID.trim());
-		} else {
-			alert("Please enter a room name.");
-		}
-	}
-
-	multiplayerClient.onRoomJoined((data: Room) => {
-		isInRoom = true;
-		roomInfo = data;
-		myPlayerType = data.playerType; // Store what piece you are (X or O)
-	});
-
-	function handleLeaveRoom() {
-		isInRoom = false;
-		roomInfo = null;
-		gameState = null;
-		roomID = "";
-		player = "x";
-		myPlayerType = "x";
-	}
-
-	// when another player joins the room, update the ready state for the room
-	multiplayerClient.onPlayerJoined((data: { playerId: string; playerCount: number }) => {
-		if (roomInfo) {
-			roomInfo.playerCount = data.playerCount;
-			roomInfo.isGameReady = data.playerCount === 2;
-		}
-	});
-
-	// Handle game state updates (whose turn, winner, etc.)
-	multiplayerClient.onGameStateUpdated((data: GameState) => {
-		gameState = data;
-		// Update the current turn indicator
-		player = data.currentPlayer;
-		// Update winner if game is over
-		if (data.winner) {
-			winner = data.winner === "draw" ? "draw" : data.winner;
-		}
-	});
 </script>
 
 <div class="game">
 	<StatusBar {player} {winner} />
-	<UltimateBoard {player} ultimateWinner={winner} {updateState} />
-
-	<div class="multiplayer-controls">
-		{#if !isInRoom}
-			<div>
-				<input type="text" placeholder="Enter room name" bind:value={roomID} />
-				<button onclick={handleJoinRoom}>Join Room</button>
-			</div>
-			<p>Status: {multiplayerClient.isConnected() ? "Connected" : "Disconnected"}</p>
-		{:else}
-			<div>
-				<p><strong>Room:</strong> {roomInfo?.roomId}</p>
-				<p><strong>You are:</strong> Player {roomInfo?.playerType.toUpperCase()}</p>
-				<p><strong>Players:</strong> {roomInfo?.playerCount}/2</p>
-				<p><strong>Game:</strong> {roomInfo?.isGameReady ? "Ready" : "Waiting for players..."}</p>
-				{#if gameState}
-					<p><strong>Current Turn:</strong> Player {gameState.currentPlayer.toUpperCase()}</p>
-					{#if gameState.winner}
-						<p><strong>Winner:</strong> {gameState.winner === "draw" ? "Draw" : `Player ${gameState.winner.toUpperCase()}`}</p>
-					{/if}
-				{/if}
-				<button onclick={handleLeaveRoom}>Leave Room</button>
-			</div>
-		{/if}
-	</div>
+	<UltimateBoard
+		player={gameMode === "singleplayer" ? player : playerType}
+		ultimateWinner={winner}
+		{updateState}
+		{gameBoard}
+		{activeBoard}
+		onMove={gameMode === "multiplayer" ? handleMultiplayerMove : undefined}
+		isMultiplayer={gameMode === "multiplayer"}
+		canPlay={gameMode === "singleplayer" || (isInRoom && room?.isGameReady && room?.currentPlayer === playerType && !room?.winner)}
+	/>
+	<GameModeSelector
+		{gameMode}
+		{multiplayerClient}
+		{room}
+		{roomID}
+		{playerType}
+		{isInRoom}
+		onSwitchToSingleplayer={switchToSingleplayer}
+		onSwitchToMultiplayer={switchToMultiplayer}
+		onJoinRoom={handleJoinRoom}
+		onLeaveRoom={handleLeaveRoom}
+		onRoomIdChange={handleRoomIdChange}
+	/>
 </div>
 
 <style>
@@ -108,22 +143,6 @@
 		align-items: center;
 		justify-content: center;
 		min-height: 100vh;
-	}
-
-	.multiplayer-controls {
-		margin-top: 20px;
-		padding: 15px;
-		border: 1px solid #ccc;
-		border-radius: 8px;
-		text-align: center;
-	}
-
-	.multiplayer-controls input {
-		margin-right: 10px;
-		padding: 5px;
-	}
-
-	.multiplayer-controls button {
-		padding: 5px 10px;
+		padding: 20px;
 	}
 </style>

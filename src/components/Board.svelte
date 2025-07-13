@@ -5,7 +5,7 @@
 	interface Props {
 		board: Board;
 		winner: CellState;
-		player: Player;
+		player: Player | null;
 		isActive: boolean;
 		updateState: (event: MoveEvent) => void;
 	}
@@ -13,7 +13,7 @@
 	let { board, winner = null, player = "x", isActive = true, updateState }: Props = $props();
 
 	function handleMove(row: number, col: number) {
-		if (!isActive || winner || board[row][col]) return;
+		if (!isActive || winner || board[row][col] || !player) return;
 
 		board[row][col] = player;
 		winner = checkWin(board);
@@ -35,7 +35,7 @@
 							{colIndex === 0 ? 'left' : ''}
 							{colIndex === row.length - 1 ? 'right' : ''}"
 							onclick={() => {
-								if (!board[rowIndex][colIndex] && !winner && isActive) {
+								if (!board[rowIndex][colIndex] && !winner && isActive && player) {
 									handleMove(rowIndex, colIndex);
 								}
 							}}

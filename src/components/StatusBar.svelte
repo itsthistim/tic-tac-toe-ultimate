@@ -3,7 +3,7 @@
 	import { type Player, type CellState } from "@/lib/utils.ts";
 
 	interface Props {
-		player: Player;
+		player: Player | null;
 		winner: CellState;
 	}
 
@@ -12,11 +12,15 @@
 
 <div class="status-bar">
 	{#if !winner}
-		Player
-		{#if player === "x"}
-			<span class="x"><Icon icon="ph:x" /></span>
+		{#if player === null}
+			Choose a game mode to start playing
 		{:else}
-			<span class="o"><Icon icon="ph:circle" /></span>
+			Player
+			{#if player === "x"}
+				<span class="x"><Icon icon="ph:x" /></span>
+			{:else if player === "o"}
+				<span class="o"><Icon icon="ph:circle" /></span>
+			{/if}
 		{/if}
 	{:else if winner === "x"}
 		Player <span class="x"><Icon icon="ph:x" /></span> wins!

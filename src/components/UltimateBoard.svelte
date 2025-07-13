@@ -6,26 +6,46 @@
 		createEmptyBoard,
 		createEmptyUltimateBoard,
 		type MoveEvent,
-		type UltimateBoards,
+		type UltimateBoard,
 		type Board as BoardType,
 		type CellState,
 		type Player
 	} from "@/lib/utils.ts";
 
 	interface Props {
-		player: Player;
+		player: Player | null;
 		ultimateWinner: CellState;
-		updateState: (player: Player, ultimateWinner: CellState) => void;
+		updateState: (player: Player | null, ultimateWinner: CellState) => void;
+		gameBoard?: UltimateBoard;
+		activeBoard?: [number, number] | null;
+		onMove?: (boardRow: number, boardCol: number, row: number, col: number) => boolean;
+		isMultiplayer?: boolean;
+		canPlay?: boolean;
 	}
 
-	let { player, ultimateWinner, updateState }: Props = $props();
+	let { player, ultimateWinner, updateState, gameBoard, activeBoard, onMove, isMultiplayer = false, canPlay = true }: Props = $props();
 
-	let boards: UltimateBoards = $state(createEmptyUltimateBoard());
-	let activeBoard: [number, number] | null = $state(null);
+	let boards: UltimateBoard = $state(gameBoard || createEmptyUltimateBoard());
+	let localActiveBoard: [number, number] | null = $state(null);
 	let wonBoards: BoardType = $state(createEmptyBoard());
+
+	// effect runs whenever any of the props change
+	// if the state of gameBoard changes, we update the local boards
+	$effect(() => {
+		if (gameBoard && isMultiplayer) {
+			boards = gameBoard;
+			wonBoards = boards.map((boardRow) => boardRow.map((board) => checkWin(board)));
+		}
+	});
 
 	function handleMove(event: MoveEvent, boardRow: number, boardCol: number) {
 		let { row, col, player } = event;
+
+		if (isMultiplayer && onMove) {
+			return onMove(boardRow, boardCol, row, col);
+		}
+
+		//#region Single Player
 
 		// set player move
 		boards[boardRow][boardCol][row][col] = player;
@@ -37,19 +57,24 @@
 		}
 
 		if (!wonBoards[row][col]) {
-			activeBoard = [row, col]; // next move must be in the corresponding board
+			localActiveBoard = [row, col]; // next move must be in the corresponding board
 		} else {
-			activeBoard = null; // any board can be played next
+			localActiveBoard = null; // any board can be played next
 		}
 
 		player = player === "x" ? "o" : "x";
 
-		// update game state
 		updateState(player, ultimateWinner ?? null);
+
+		//#endregion
 	}
 
 	function isActive(boardRow: number, boardCol: number): boolean {
-		return !ultimateWinner && !wonBoards[boardRow][boardCol] && (!activeBoard || (activeBoard[0] === boardRow && activeBoard[1] === boardCol));
+		if (isMultiplayer && !canPlay) return false;
+
+		const currentActiveBoard = isMultiplayer ? activeBoard : localActiveBoard;
+
+		return !ultimateWinner && !wonBoards[boardRow][boardCol] && (!currentActiveBoard || (currentActiveBoard[0] === boardRow && currentActiveBoard[1] === boardCol));
 	}
 </script>
 

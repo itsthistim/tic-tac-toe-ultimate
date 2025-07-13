@@ -1,14 +1,38 @@
 export type Player = "x" | "o";
 export type CellState = Player | "draw" | null;
 export type Board = CellState[][];
-export type UltimateBoards = Board[][];
+export type UltimateBoard = Board[][];
 
 export interface MoveEvent {
 	row: number;
 	col: number;
-	player: Player;
+	player: Player | null;
 	winner: CellState;
 	board: Board;
+}
+
+export interface Room {
+	roomId: string;
+	isGameReady: boolean;
+	players: RoomMember[];
+	currentPlayer: Player;
+	winner: Player | "draw" | null;
+	board: UltimateBoard;
+	activeBoard: [number, number] | null;
+}
+
+export interface RoomMember {
+	socketId: string;
+	playerType: Player;
+	roomId: string;
+}
+
+export interface Move {
+	roomId: string;
+	boardRow: number;
+	boardCol: number;
+	row: number;
+	col: number;
 }
 
 /**
@@ -17,21 +41,21 @@ export interface MoveEvent {
  * @returns Winning player ("x" or "o"), "draw" if all boards are completed, or null if no winner
  */
 export function checkWin(board: Board): CellState {
-	// Check rows
+	// check rows
 	for (let i = 0; i < 3; i++) {
 		if (board[i][0] && board[i][0] === board[i][1] && board[i][1] === board[i][2]) {
 			return board[i][0] as Player;
 		}
 	}
 
-	// Check columns
+	// check columns
 	for (let j = 0; j < 3; j++) {
 		if (board[0][j] && board[0][j] === board[1][j] && board[1][j] === board[2][j]) {
 			return board[0][j] as Player;
 		}
 	}
 
-	// Check diagonals
+	// check diagonals
 	if (board[0][0] && board[0][0] === board[1][1] && board[1][1] === board[2][2]) {
 		return board[0][0] as Player;
 	}
@@ -53,7 +77,6 @@ export function checkWin(board: Board): CellState {
  * @returns Ultimate winner or null
  */
 export function checkUltimateWinner(boardWinners: Board): CellState {
-	// remove boards that ended in a draw, only check boards with winners
 	const filteredBoard: Board = boardWinners.map((row) => row.map((cell) => (cell === "draw" ? null : cell)));
 
 	const winner = checkWin(filteredBoard);
@@ -61,7 +84,6 @@ export function checkUltimateWinner(boardWinners: Board): CellState {
 		return winner;
 	}
 
-	// Check if all boards are completed (either won or drawn)
 	const allBoardsCompleted = boardWinners.every((row) => row.every((cell) => cell !== null));
 
 	if (allBoardsCompleted) {
@@ -103,7 +125,7 @@ export function createEmptyBoard(): Board {
  * Create empty ultimate boards (3x3 grid of 3x3 boards)
  * @returns A new set of empty boards for ultimate tic-tac-toe
  */
-export function createEmptyUltimateBoard(): UltimateBoards {
+export function createEmptyUltimateBoard(): UltimateBoard {
 	return Array(3)
 		.fill(null)
 		.map(() =>
