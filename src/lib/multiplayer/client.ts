@@ -6,7 +6,7 @@ export class MultiplayerClient {
 	private connected: boolean = false;
 
 	constructor() {
-		this.socket = io("http://localhost:3001");
+		this.socket = io(import.meta.env.VITE_SOCKET_ENDPOINT);
 
 		this.socket.on("connect", () => {
 			this.connected = true;
@@ -42,19 +42,21 @@ export class MultiplayerClient {
 		this.socket.emit("make-move", { roomId, boardRow, boardCol, row, col });
 	}
 
-	onMoveMade(callback: (data: {
-		roomId: string;
-		boardRow: number;
-		boardCol: number;
-		row: number;
-		col: number;
-		player: Player;
-		boardWinner: Player | "draw" | null;
-		currentPlayer: Player;
-		winner: Player | "draw" | null;
-		board: UltimateBoard;
-		activeBoard: [number, number] | null;
-	}) => void): void {
+	onMoveMade(
+		callback: (data: {
+			roomId: string;
+			boardRow: number;
+			boardCol: number;
+			row: number;
+			col: number;
+			player: Player;
+			boardWinner: Player | "draw" | null;
+			currentPlayer: Player;
+			winner: Player | "draw" | null;
+			board: UltimateBoard;
+			activeBoard: [number, number] | null;
+		}) => void
+	): void {
 		this.socket.on("move-made", callback);
 	}
 
