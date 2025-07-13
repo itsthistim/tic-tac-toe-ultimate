@@ -4,13 +4,14 @@
 	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
-		"dev": "astro dev",
+		"dev": "concurrently \"pnpm run server\" \"pnpm run client\"",
 		"build": "astro build",
+		"build:tauri": "tauri build",
+		"build:tauri-debug": "tauri build --debug",
 		"preview": "astro preview",
 		"tauri": "tauri",
 		"server": "tsx watch src/lib/multiplayer/server.ts",
-		"dev:full": "concurrently \"npm run server\" \"npm run dev\"",
-		"tauri:dev:full": "concurrently \"npm run server\" \"npm run tauri dev\""
+		"client": "astro dev"
 	},
 	"dependencies": {
 		"@astrojs/svelte": "^7.1.0",
