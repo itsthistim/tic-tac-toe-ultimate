@@ -6,8 +6,6 @@
 	"scripts": {
 		"dev": "concurrently \"pnpm run server\" \"pnpm run client\"",
 		"build": "astro build",
-		"build:tauri": "tauri build",
-		"build:tauri-debug": "tauri build --debug",
 		"preview": "astro preview",
 		"tauri": "tauri",
 		"server": "tsx watch src/lib/multiplayer/server.ts",
