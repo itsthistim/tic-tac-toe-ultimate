@@ -1,4 +1,5 @@
 import { Server } from "socket.io";
+import { createServer } from "http";
 import { createEmptyUltimateBoard, checkWin, checkUltimateWinner } from "../utils";
 import type { Room, RoomMember, Move } from "../utils";
 
@@ -7,15 +8,18 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		// Use environment PORT or fallback to 3001 for local development
 		const port = process.env.PORT ? parseInt(process.env.PORT) : 3001;
 
-		this.io = new Server(port, {
+		const httpServer = createServer();
+
+		this.io = new Server(httpServer, {
 			cors: {
 				origin: "*",
 				methods: ["GET", "POST"]
 			}
 		});
+
+		httpServer.listen(port);
 
 		this.io.on("connection", (socket) => {
 			socket.on("join-room", (roomId: string) => {
