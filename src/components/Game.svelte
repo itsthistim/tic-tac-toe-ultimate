@@ -3,8 +3,8 @@
 	import UltimateBoard from "@/components/UltimateBoard.svelte";
 	import GameModeSelector from "@/components/GameModeSelector.svelte";
 	import type { Player, CellState, Room, RoomMember, UltimateBoard as UltimateBoardType } from "@/lib/utils.ts";
-	import { MultiplayerClient } from "@/lib/multiplayer/client.ts";
-	import { createEmptyUltimateBoard } from "@/lib/utils.ts";
+	import { MultiplayerClient } from "@/lib/multiplayer/client";
+	import { createEmptyUltimateBoard } from "@/lib/utils";
 
 	let multiplayerClient: MultiplayerClient | null = $state(null);
 	let gameMode: "singleplayer" | "multiplayer" = $state("singleplayer");
