@@ -10,6 +10,7 @@
 		roomID: string;
 		playerType: Player | null;
 		isInRoom: boolean;
+		isConnected: boolean;
 		onSwitchToSingleplayer: () => void;
 		onSwitchToMultiplayer: () => void;
 		onJoinRoom: (roomId: string) => void;
@@ -17,7 +18,7 @@
 		onRoomIdChange: (roomId: string) => void;
 	}
 
-	let { gameMode, multiplayerClient, room, roomID, playerType, isInRoom, onSwitchToSingleplayer, onSwitchToMultiplayer, onJoinRoom, onLeaveRoom, onRoomIdChange }: Props = $props();
+	let { gameMode, multiplayerClient, room, roomID, playerType, isInRoom, isConnected, onSwitchToSingleplayer, onSwitchToMultiplayer, onJoinRoom, onLeaveRoom, onRoomIdChange }: Props = $props();
 
 	function handleJoinRoom() {
 		onJoinRoom(roomID);
@@ -56,8 +57,8 @@
 						<button onclick={handleJoinRoom} class="join-btn">Join</button>
 					</div>
 					<div class="connection-status">
-						<span class="status-indicator {multiplayerClient?.isConnected() ? 'connected' : 'disconnected'}"></span>
-						{multiplayerClient?.isConnected() ? "Connected" : "Connecting..."}
+						<span class="status-indicator {isConnected ? 'connected' : 'disconnected'}"></span>
+						{isConnected ? "Connected" : "Connecting..."}
 					</div>
 				</div>
 			{:else}

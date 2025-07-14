@@ -160,9 +160,17 @@ export class Multiplayer {
 
 		const room = this.rooms.get(roomId)!;
 		const playerCount = this.io.sockets.adapter.rooms.get(roomId)?.size || 0;
+
 		room.isGameReady = playerCount === 2;
 
-		const playerType = playerCount === 1 ? "x" : "o";
+		const existingTypes = room.players.map((p) => p.playerType);
+		let playerType: "x" | "o";
+		if (!existingTypes.includes("x")) {
+			playerType = "x";
+		} else {
+			playerType = "o";
+		}
+
 		const joinedMember: RoomMember = {
 			socketId: socket.id,
 			playerType,
@@ -174,6 +182,7 @@ export class Multiplayer {
 			...joinedMember,
 			room: room
 		});
+
 		socket.to(roomId).emit("player-joined", room);
 	}
 }

@@ -5,20 +5,40 @@ export class MultiplayerClient {
 	private socket: Socket;
 	private connected: boolean = false;
 
+	private roomJoinedCallback?: (data: RoomMember & { room: Room }) => void;
+	private playerJoinedCallback?: (data: Room) => void;
+	private moveMadeCallback?: (data: any) => void;
+	private connectionStatusCallback?: (connected: boolean) => void;
+
 	constructor() {
 		this.socket = io(import.meta.env.VITE_SOCKET_ENDPOINT);
 
 		this.socket.on("connect", () => {
 			this.connected = true;
+			this.connectionStatusCallback?.(true);
 		});
 
 		this.socket.on("disconnect", () => {
 			this.connected = false;
+			this.connectionStatusCallback?.(false);
 		});
 
 		this.socket.on("connect_error", (error) => {
 			this.connected = false;
-			console.error("Client: Connection error:", error);
+			console.error("🚨 Client: Connection error:", error);
+			this.connectionStatusCallback?.(false);
+		});
+
+		this.socket.on("joined-room", (data) => {
+			this.roomJoinedCallback?.(data);
+		});
+
+		this.socket.on("player-joined", (data) => {
+			this.playerJoinedCallback?.(data);
+		});
+
+		this.socket.on("move-made", (data) => {
+			this.moveMadeCallback?.(data);
 		});
 	}
 
@@ -31,11 +51,11 @@ export class MultiplayerClient {
 	}
 
 	onRoomJoined(callback: (data: RoomMember & { room: Room }) => void): void {
-		this.socket.on("joined-room", callback);
+		this.roomJoinedCallback = callback;
 	}
 
 	onPlayerJoined(callback: (data: Room) => void): void {
-		this.socket.on("player-joined", callback);
+		this.playerJoinedCallback = callback;
 	}
 
 	makeMove(roomId: string, boardRow: number, boardCol: number, row: number, col: number): void {
@@ -57,7 +77,13 @@ export class MultiplayerClient {
 			activeBoard: [number, number] | null;
 		}) => void
 	): void {
-		this.socket.on("move-made", callback);
+		this.moveMadeCallback = callback;
+	}
+
+	onConnectionStatusChange(callback: (connected: boolean) => void): void {
+		this.connectionStatusCallback = callback;
+		// Immediately call with current status
+		callback(this.connected);
 	}
 
 	disconnect(): void {

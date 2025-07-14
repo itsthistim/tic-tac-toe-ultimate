@@ -25,29 +25,34 @@
 	function initMultiplayer() {
 		if (!multiplayerClient) {
 			multiplayerClient = new MultiplayerClient();
-			setupMultiplayerEvents();
+
+			multiplayerClient.onConnectionStatusChange((connected) => {
+				isConnected = connected;
+			});
+
+			multiplayerClient.onRoomJoined((data) => {
+				room = data.room;
+				playerType = data.playerType;
+				isInRoom = true;
+			});
+
+			multiplayerClient.onPlayerJoined((updatedRoom: Room) => {
+				room = updatedRoom;
+			});
+
+			multiplayerClient.onMoveMade((moveData) => {
+				if (room) {
+					gameBoard = moveData.board;
+					activeBoard = moveData.activeBoard;
+					player = moveData.currentPlayer;
+					winner = moveData.winner;
+					room.currentPlayer = moveData.currentPlayer;
+					room.winner = moveData.winner;
+					room.board = moveData.board;
+					room.activeBoard = moveData.activeBoard;
+				}
+			});
 		}
-	}
-
-	function setupMultiplayerEvents() {
-		if (!multiplayerClient) return;
-
-		multiplayerClient.onPlayerJoined((updatedRoom: Room) => {
-			room = updatedRoom;
-		});
-
-		multiplayerClient.onMoveMade((moveData) => {
-			if (room) {
-				gameBoard = moveData.board;
-				activeBoard = moveData.activeBoard;
-				player = moveData.currentPlayer;
-				winner = moveData.winner;
-				room.currentPlayer = moveData.currentPlayer;
-				room.winner = moveData.winner;
-				room.board = moveData.board;
-				room.activeBoard = moveData.activeBoard;
-			}
-		});
 	}
 
 	function handleMultiplayerMove(boardRow: number, boardCol: number, row: number, col: number) {
@@ -128,6 +133,7 @@
 		{roomID}
 		{playerType}
 		{isInRoom}
+		{isConnected}
 		onSwitchToSingleplayer={switchToSingleplayer}
 		onSwitchToMultiplayer={switchToMultiplayer}
 		onJoinRoom={handleJoinRoom}
