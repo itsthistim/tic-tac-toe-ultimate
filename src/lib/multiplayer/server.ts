@@ -7,7 +7,8 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const port = 3001;
+		// Use environment PORT or fallback to 3001 for local development
+		const port = process.env.PORT ? parseInt(process.env.PORT) : 3001;
 
 		this.io = new Server(port, {
 			cors: {
