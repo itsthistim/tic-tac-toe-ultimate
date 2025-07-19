@@ -1,6 +1,7 @@
 # Ultimate Tic Tac Toe
 
-A cross-platform Ultimate Tic Tac Toe game built with Astro, Svelte, and Tauri.
+An Ultimate Tic Tac Toe game built with Astro, Svelte, and Tauri with multiplayer support using [Socket.IO](https://socket.io/).
+Playable at https://tic-tac-toe.thistim.me/
 
 ## Installation
 
