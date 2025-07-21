@@ -4,9 +4,9 @@
 	"version": "0.1.0",
 	"identifier": "com.tic-tac-toe-ultimate.app",
 	"build": {
-		"beforeDevCommand": "pnpm run client",
-		"beforeBuildCommand": "pnpm run build",
-		"devUrl": "http://localhost:4321",
+		"beforeDevCommand": "npm run client",
+		"beforeBuildCommand": "npm run build",
+		"devUrl": "http://localhost:5173",
 		"frontendDist": "../dist"
 	},
 	"app": {
