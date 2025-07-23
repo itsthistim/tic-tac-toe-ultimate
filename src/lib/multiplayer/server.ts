@@ -14,14 +14,17 @@ export class Multiplayer {
 
 		this.io = new Server(httpServer, {
 			cors: {
-				origin: "*",
-				methods: ["GET", "POST"]
+				origin: ["https://tic-tac-toe.thistim.me", "http://localhost:3001"],
+				methods: ["GET", "POST"],
+				credentials: true
 			}
 		});
 
 		httpServer.listen(port);
+		console.log(`Server: Listening on port ${port}`);
 
 		this.io.on("connection", (socket) => {
+			console.log("Server: New client connected:", socket.id);
 			socket.on("join-room", (roomId: string) => {
 				this.handlePlayerJoin(socket, roomId);
 			});
