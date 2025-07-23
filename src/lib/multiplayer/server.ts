@@ -8,7 +8,7 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const port = process.env.PORT ? parseInt(process.env.PORT) : 3001;
+		const port = process.env.PORT ? parseInt(process.env.PORT) : 3002;
 
 		const httpServer = createServer();
 

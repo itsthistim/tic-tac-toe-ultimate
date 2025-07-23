@@ -7,3 +7,14 @@ services:
         ports:
             - "3001:80"
         restart: unless-stopped
+    
+    server:
+        image: node:22-alpine
+        container_name: tic-tac-toe-server
+        working_dir: /app
+        command: sh -c "npm install && npm run server"
+        ports:
+            - "3002:3002"
+        volumes:
+            - .:/app
+        restart: unless-stopped
