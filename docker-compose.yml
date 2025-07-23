@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+    app:
+        image: tic-tac-toe-ultimate
+        container_name: tic-tac-toe-ultimate
+        build: .
+        ports:
+            - "3001:80"
+        restart: unless-stopped
