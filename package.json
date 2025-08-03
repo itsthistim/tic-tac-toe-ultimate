@@ -4,7 +4,7 @@
 	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
-		"dev": "concurrently \"npm run server\" \"serve dist\"",
+		"dev": "concurrently \"npm run server\" \"npm run client\"",
 		"build": "astro build",
 		"preview": "astro preview",
 		"tauri": "tauri",
