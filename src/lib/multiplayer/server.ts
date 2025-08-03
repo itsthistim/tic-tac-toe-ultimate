@@ -8,13 +8,12 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const port = process.env.PORT ? parseInt(process.env.PORT) : 3002;
-
+		const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
 		const httpServer = createServer();
 
 		this.io = new Server(httpServer, {
 			cors: {
-				origin: ["https://tic-tac-toe.thistim.me", "http://localhost:3001"],
+				origin: ["https://tic-tac-toe.thistim.me", "http://localhost" + port],
 				methods: ["GET", "POST"],
 				credentials: true
 			}
