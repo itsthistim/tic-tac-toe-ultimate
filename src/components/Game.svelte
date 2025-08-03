@@ -117,7 +117,7 @@
 <div class="game">
 	<StatusBar {player} {winner} />
 	<UltimateBoard
-		player={gameMode === "singleplayer" ? player : playerType}
+		{player}
 		ultimateWinner={winner}
 		{updateState}
 		{gameBoard}

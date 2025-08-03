@@ -7,13 +7,14 @@
 		winner: CellState;
 		player: Player | null;
 		isActive: boolean;
+		canPlay?: boolean;
 		updateState: (event: MoveEvent) => void;
 	}
 
-	let { board, winner = null, player = "x", isActive = true, updateState }: Props = $props();
+	let { board, winner = null, player = "x", isActive = true, canPlay = true, updateState }: Props = $props();
 
 	function handleMove(row: number, col: number) {
-		if (!isActive || winner || board[row][col] || !player) return;
+		if (!canPlay || winner || board[row][col] || !player) return;
 
 		board[row][col] = player;
 		winner = checkWin(board);
@@ -35,7 +36,7 @@
 							{colIndex === 0 ? 'left' : ''}
 							{colIndex === row.length - 1 ? 'right' : ''}"
 							onclick={() => {
-								if (!board[rowIndex][colIndex] && !winner && isActive && player) {
+								if (!board[rowIndex][colIndex] && !winner && canPlay && player) {
 									handleMove(rowIndex, colIndex);
 								}
 							}}
