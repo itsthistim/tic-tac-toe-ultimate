@@ -10,21 +10,23 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
+		const port = process.env.PORT ? parseInt(process.env.PORT) : 3002;
+		const host = process.env.SOCKET_HOST || "0.0.0.0";
+
 		const httpServer = createServer();
 
-		console.log("server.ts: Initializing multiplayer server on port", port);
+		console.log("server.ts: Initializing multiplayer server on port", port, "host", host);
 
 		this.io = new Server(httpServer, {
 			cors: {
-				origin: ["https://tic-tac-toe.thistim.me", "http://localhost:3000"],
+				origin: "https://tic-tac-toe.thistim.me",
 				methods: ["GET", "POST"],
 				credentials: true
 			}
 		});
 
-		httpServer.listen(port);
-		console.log(`server.ts: Listening on port ${port}`);
+		httpServer.listen(port, host);
+		console.log(`server.ts: WebSocket server listening on ${host}:${port}`);
 
 		this.io.on("connection", (socket) => {
 			console.log("server.ts: New client connected:", socket.id);

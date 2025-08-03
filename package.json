@@ -8,7 +8,7 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"tauri": "tauri",
-		"server": "tsx src/lib/multiplayer/server.ts",
+		"server": "NODE_ENV=production tsx src/lib/multiplayer/server.ts",
 		"client": "astro dev"
 	},
 	"dependencies": {
