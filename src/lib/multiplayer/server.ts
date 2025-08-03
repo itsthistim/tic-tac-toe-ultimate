@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { Server } from "socket.io";
 import { createServer } from "http";
 import { createEmptyUltimateBoard, checkWin, checkUltimateWinner } from "../utils";
@@ -11,9 +13,11 @@ export class Multiplayer {
 		const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
 		const httpServer = createServer();
 
+		console.log("Port:", process.env.PORT);
+
 		this.io = new Server(httpServer, {
 			cors: {
-				origin: ["https://tic-tac-toe.thistim.me", "http://localhost" + port],
+				origin: ["https://tic-tac-toe.thistim.me", "http://localhost:3000"],
 				methods: ["GET", "POST"],
 				credentials: true
 			}
