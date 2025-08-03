@@ -23,7 +23,7 @@
 	}
 </script>
 
-<div class="board-wrapper {isActive ? `active-${player}` : ''}">
+<div class="board-wrapper {isActive ? `active-${player}` : ''} {!canPlay ? 'cannot-play' : ''}">
 	<table class="board">
 		<tbody>
 			{#each board as row, rowIndex}
@@ -89,6 +89,10 @@
 
 	.board-wrapper.active-o {
 		background-color: rgba(207, 88, 200, 0.2);
+	}
+
+	.board-wrapper.cannot-play .square {
+		cursor: not-allowed;
 	}
 
 	.board {
