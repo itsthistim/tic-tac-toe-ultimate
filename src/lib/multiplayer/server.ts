@@ -10,7 +10,7 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const port = process.env.PORT ? parseInt(process.env.PORT) : 3002;
+		const port = process.env.VITE_WS_PORT;
 		const httpServer = createServer();
 
 		this.io = new Server(httpServer, {
@@ -22,6 +22,7 @@ export class Multiplayer {
 		});
 
 		httpServer.listen(port);
+		console.info("Multiplayer server is running on port", port);
 
 		this.io.on("connection", (socket) => {
 			socket.on("join-room", (roomId: string) => {

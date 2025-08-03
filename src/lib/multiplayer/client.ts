@@ -11,8 +11,8 @@ export class MultiplayerClient {
 	private connectionStatusCallback?: (connected: boolean) => void;
 
 	constructor() {
-		console.info("client.ts: Connecting to the multiplayer server", import.meta.env.VITE_SOCKET_ENDPOINT);
-		this.socket = io(import.meta.env.VITE_SOCKET_ENDPOINT);
+		console.info("client.ts: Connecting to the multiplayer server", `${import.meta.env.VITE_WS_ENDPOINT}:${import.meta.env.VITE_WS_PORT}`);
+		this.socket = io(`${import.meta.env.VITE_WS_ENDPOINT}:${import.meta.env.VITE_WS_PORT}`);
 
 		this.socket.on("connect", () => {
 			console.info("client.ts: Successfully connected to the multiplayer server");
