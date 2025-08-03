@@ -11,25 +11,19 @@ export class Multiplayer {
 
 	constructor() {
 		const port = process.env.PORT ? parseInt(process.env.PORT) : 3002;
-		const host = process.env.SOCKET_HOST || "0.0.0.0";
-
 		const httpServer = createServer();
-
-		console.log("server.ts: Initializing multiplayer server on port", port, "host", host);
 
 		this.io = new Server(httpServer, {
 			cors: {
-				origin: "https://tic-tac-toe.thistim.me",
+				origin: ["https://tic-tac-toe.thistim.me", "http://localhost:5173"],
 				methods: ["GET", "POST"],
 				credentials: true
 			}
 		});
 
-		httpServer.listen(port, host);
-		console.log(`server.ts: WebSocket server listening on ${host}:${port}`);
+		httpServer.listen(port);
 
 		this.io.on("connection", (socket) => {
-			console.log("server.ts: New client connected:", socket.id);
 			socket.on("join-room", (roomId: string) => {
 				this.handlePlayerJoin(socket, roomId);
 			});

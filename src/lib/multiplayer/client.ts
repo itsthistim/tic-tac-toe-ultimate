@@ -11,9 +11,11 @@ export class MultiplayerClient {
 	private connectionStatusCallback?: (connected: boolean) => void;
 
 	constructor() {
+		console.info("client.ts: Connecting to the multiplayer server", import.meta.env.VITE_SOCKET_ENDPOINT);
 		this.socket = io(import.meta.env.VITE_SOCKET_ENDPOINT);
 
 		this.socket.on("connect", () => {
+			console.info("client.ts: Successfully connected to the multiplayer server");
 			this.connected = true;
 			this.connectionStatusCallback?.(true);
 		});
@@ -25,7 +27,7 @@ export class MultiplayerClient {
 
 		this.socket.on("connect_error", (error) => {
 			this.connected = false;
-			console.error("🚨 Client: Connection error:", error);
+			console.error("client.ts: Connection error:", error);
 			this.connectionStatusCallback?.(false);
 		});
 
