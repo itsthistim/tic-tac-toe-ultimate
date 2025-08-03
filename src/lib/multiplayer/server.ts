@@ -13,7 +13,7 @@ export class Multiplayer {
 		const port = process.env.PORT ? parseInt(process.env.PORT) : 80;
 		const httpServer = createServer();
 
-		console.log("Port:", process.env.PORT);
+		console.log("server.ts: Initializing multiplayer server on port", port);
 
 		this.io = new Server(httpServer, {
 			cors: {
@@ -24,10 +24,10 @@ export class Multiplayer {
 		});
 
 		httpServer.listen(port);
-		console.log(`Server: Listening on port ${port}`);
+		console.log(`server.ts: Listening on port ${port}`);
 
 		this.io.on("connection", (socket) => {
-			console.log("Server: New client connected:", socket.id);
+			console.log("server.ts: New client connected:", socket.id);
 			socket.on("join-room", (roomId: string) => {
 				this.handlePlayerJoin(socket, roomId);
 			});
