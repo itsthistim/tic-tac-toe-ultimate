@@ -7,13 +7,14 @@
 		winner: CellState;
 		player: Player | null;
 		isActive: boolean;
+		canPlay?: boolean;
 		updateState: (event: MoveEvent) => void;
 	}
 
-	let { board, winner = null, player = "x", isActive = true, updateState }: Props = $props();
+	let { board, winner = null, player = "x", isActive = true, canPlay = true, updateState }: Props = $props();
 
 	function handleMove(row: number, col: number) {
-		if (!isActive || winner || board[row][col] || !player) return;
+		if (!canPlay || winner || board[row][col] || !player) return;
 
 		board[row][col] = player;
 		winner = checkWin(board);
@@ -22,7 +23,7 @@
 	}
 </script>
 
-<div class="board-wrapper {isActive ? `active-${player}` : ''}">
+<div class="board-wrapper {isActive ? `active-${player}` : ''} {!canPlay ? 'cannot-play' : ''}">
 	<table class="board">
 		<tbody>
 			{#each board as row, rowIndex}
@@ -35,7 +36,7 @@
 							{colIndex === 0 ? 'left' : ''}
 							{colIndex === row.length - 1 ? 'right' : ''}"
 							onclick={() => {
-								if (!board[rowIndex][colIndex] && !winner && isActive && player) {
+								if (!board[rowIndex][colIndex] && !winner && canPlay && player) {
 									handleMove(rowIndex, colIndex);
 								}
 							}}
@@ -88,6 +89,10 @@
 
 	.board-wrapper.active-o {
 		background-color: rgba(207, 88, 200, 0.2);
+	}
+
+	.board-wrapper.cannot-play .square {
+		cursor: not-allowed;
 	}
 
 	.board {

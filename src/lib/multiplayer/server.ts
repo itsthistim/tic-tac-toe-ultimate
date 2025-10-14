@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { Server } from "socket.io";
 import { createServer } from "http";
 import { createEmptyUltimateBoard, checkWin, checkUltimateWinner } from "../utils";
@@ -8,8 +10,7 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const port = process.env.PORT ? parseInt(process.env.PORT) : 3002;
-
+		const port = process.env.VITE_WS_PORT;
 		const httpServer = createServer();
 
 		this.io = new Server(httpServer, {
@@ -21,10 +22,9 @@ export class Multiplayer {
 		});
 
 		httpServer.listen(port);
-		console.log(`Server: Listening on port ${port}`);
+		console.info("Multiplayer server is running on port", port);
 
 		this.io.on("connection", (socket) => {
-			console.log("Server: New client connected:", socket.id);
 			socket.on("join-room", (roomId: string) => {
 				this.handlePlayerJoin(socket, roomId);
 			});

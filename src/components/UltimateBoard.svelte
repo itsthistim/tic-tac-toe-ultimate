@@ -30,7 +30,7 @@
 	let wonBoards: BoardType = $state(createEmptyBoard());
 
 	// effect runs whenever any of the props change
-	// if the state of gameBoard changes, we update the local boards
+	// if the state of gameBoard changes, update the local boards
 	$effect(() => {
 		if (gameBoard && isMultiplayer) {
 			boards = gameBoard;
@@ -70,8 +70,6 @@
 	}
 
 	function isActive(boardRow: number, boardCol: number): boolean {
-		if (isMultiplayer && !canPlay) return false;
-
 		const currentActiveBoard = isMultiplayer ? activeBoard : localActiveBoard;
 
 		return !ultimateWinner && !wonBoards[boardRow][boardCol] && (!currentActiveBoard || (currentActiveBoard[0] === boardRow && currentActiveBoard[1] === boardCol));
@@ -85,7 +83,14 @@
 				{#each row as board, colIndex}
 					<td class="square {rowIndex === 0 ? 'top' : rowIndex === 2 ? 'bottom' : ''} {colIndex === 0 ? 'left' : colIndex === 2 ? 'right' : ''}">
 						<div class="board-container">
-							<Board {board} winner={wonBoards[rowIndex][colIndex]} {player} isActive={isActive(rowIndex, colIndex)} updateState={(e) => handleMove(e, rowIndex, colIndex)} />
+							<Board
+								{board}
+								winner={wonBoards[rowIndex][colIndex]}
+								{player}
+								isActive={isActive(rowIndex, colIndex)}
+								{canPlay}
+								updateState={(e) => handleMove(e, rowIndex, colIndex)}
+							/>
 						</div>
 					</td>
 				{/each}
