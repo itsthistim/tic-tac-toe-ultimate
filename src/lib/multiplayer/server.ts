@@ -14,7 +14,7 @@ export class Multiplayer {
 
 		this.io = new Server(httpServer, {
 			cors: {
-				origin: ["https://tic-tac-toe.thistim.me", "http://localhost:3001"],
+				origin: ["https://tic-tac-toe.thistim.me", "http://localhost:" + port],
 				methods: ["GET", "POST"],
 				credentials: true
 			}
