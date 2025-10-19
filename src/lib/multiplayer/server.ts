@@ -25,11 +25,14 @@ export class Multiplayer {
 			new Set([
 				"https://tic-tac-toe.thistim.me",
 				"https://wss.tic-tac-toe.thistim.me",
+				"http://tic-tac-toe.thistim.me",
+				"http://wss.tic-tac-toe.thistim.me",
 				"wss://wss.tic-tac-toe.thistim.me",
 				"wss://tic-tac-toe.thistim.me",
+				"ws://wss.tic-tac-toe.thistim.me",
+				"ws://tic-tac-toe.thistim.me",
 				serverUrl,
-				clientOrigin,
-				'*'
+				clientOrigin
 			])
 		);
 
