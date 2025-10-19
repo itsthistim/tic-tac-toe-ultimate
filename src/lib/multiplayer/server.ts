@@ -28,7 +28,8 @@ export class Multiplayer {
 				"wss://wss.tic-tac-toe.thistim.me",
 				"wss://tic-tac-toe.thistim.me",
 				serverUrl,
-				clientOrigin
+				clientOrigin,
+				'*'
 			])
 		);
 
