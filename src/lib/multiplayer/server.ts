@@ -17,77 +17,26 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const serverPort = Number(process.env.SERVER_PORT || 3031);
-		const publicEndpoint = (process.env.PUBLIC_WS_ENDPOINT || "http://localhost").replace(/\/$/, "");
-		const publicPort = Number(process.env.PUBLIC_WS_PORT || serverPort);
-		const clientOrigin = process.env.NODE_ENV === "production" 
-			? publicEndpoint
-			: `http://localhost:${process.env.PUBLIC_CLIENT_PORT || 5173}`;
+		const serverPort = 3031;
+		
+		const allowedOrigins = "*";
 
-		const allowedOrigins = Array.from(
-			new Set([
-				"https://tic-tac-toe.thistim.me",
-				clientOrigin,
-				"http://localhost:5173",
-				`http://localhost:${serverPort}`
-			])
-		);
-
-		console.info("Multiplayer server starting:", {
-			serverEndpoint: publicEndpoint,
-			serverPort,
-			clientOrigin,
-			allowedOrigins
-		});
+		console.info("Multiplayer server starting on port 3031 with CORS disabled");
 
 		const httpServer = createServer();
 
-		// Log incoming requests and ensure CORS headers for socket.io polling
-		httpServer.on("request", (req, res) => {
-			try {
-				const origin = (req.headers.origin as string) || "";
-				const url = req.url || "";
-
-				// Log all socket.io requests for debugging
-				if (url.startsWith("/socket.io/")) {
-					console.log(`[${new Date().toISOString()}] ${req.method} ${url} Origin: ${origin}`);
-				}
-
-				if (origin && allowedOrigins.includes(origin)) {
-					console.log("✓ Setting CORS headers for allowed origin:", origin);
-					res.setHeader("Access-Control-Allow-Origin", origin);
-					res.setHeader("Access-Control-Allow-Credentials", "true");
-					res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-					res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Requested-By");
-				} else if (origin) {
-					console.log("✗ Origin not allowed:", origin, "Allowed:", allowedOrigins);
-				}
-
-				if (req.method === "OPTIONS") {
-					res.statusCode = 204;
-					res.end();
-					return;
-				}
-			} catch (e) {
-				console.error("Error in request handler:", e);
-			}
-		});
-
 		this.io = new Server(httpServer, {
 			cors: {
-				origin: allowedOrigins,
-				methods: ["GET", "POST"],
+				origin: "*",
+				methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 				credentials: true
-			}
+			},
+			allowEIO3: true,
+			transports: ["polling", "websocket"]
 		});
 
 		httpServer.listen(serverPort);
-
-		console.info("Multiplayer server is running", {
-			serverEndpoint: publicEndpoint,
-			serverPort,
-			environment: process.env.NODE_ENV || "development"
-		});
+		console.info("Multiplayer server running on port 3031");
 
 		this.io.on("connection", (socket) => {
 			socket.on("join-room", (roomId: string) => {

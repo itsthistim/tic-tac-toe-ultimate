@@ -11,14 +11,11 @@ export class MultiplayerClient {
 	private connectionStatusCallback?: (connected: boolean) => void;
 
 	constructor() {
-		// Astro exposes client-side env vars with the PUBLIC_ prefix
-		const endpoint = (import.meta.env.PUBLIC_WS_ENDPOINT as string | undefined) ?? "http://localhost";
-		const port = (import.meta.env.PUBLIC_WS_PORT as string | undefined) ?? "5371";
-		const base = endpoint.replace(/\/$/, "");
-		const url = `${base}:${port}`;
+		const url = "https://wss.thistim.me";
 		console.info("client.ts: Connecting to the multiplayer server", url);
 		this.socket = io(url, {
-			withCredentials: true
+			withCredentials: true,
+			transports: ["polling", "websocket"]
 		});
 
 		this.socket.on("connect", () => {
