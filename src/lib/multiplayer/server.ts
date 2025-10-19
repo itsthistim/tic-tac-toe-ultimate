@@ -17,11 +17,11 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const port = Number(process.env.PUBLIC_WS_PORT || 3001);
+		const port = Number(process.env.PUBLIC_WS_PORT || 3031);
 		const serverEndpoint = (process.env.PUBLIC_WS_ENDPOINT || "http://localhost").replace(/\/$/, "");
 		
-		// prod: server on 3001), client on 443
-		// dev: server on 3001, client on 5173
+		// prod: server on 3031), client on 443
+		// dev: server on 3031, client on 5173
 		const clientOrigin = process.env.NODE_ENV === "production" 
 			? serverEndpoint
 			: `http://localhost:${process.env.PUBLIC_CLIENT_PORT || 5173}`;
@@ -31,7 +31,7 @@ export class Multiplayer {
 				"https://tic-tac-toe.thistim.me",
 				clientOrigin,
 				"http://localhost:5173",
-				"http://localhost:3001"
+				"http://localhost:3031"
 			])
 		);
 
