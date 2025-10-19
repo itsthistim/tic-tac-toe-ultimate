@@ -41,29 +41,46 @@
 	function handleMove(event: MoveEvent, boardRow: number, boardCol: number) {
 		let { row, col, player } = event;
 
+		// Multiplayer flow delegates validation to the server
 		if (isMultiplayer && onMove) {
 			return onMove(boardRow, boardCol, row, col);
 		}
 
 		//#region Single Player
+		// check whether game already over or whether board already won/drawn
+		if (ultimateWinner) return;
+		if (wonBoards[boardRow][boardCol]) return;
 
-		// set player move
+		// check whether move is in the active board
+		const currentActive = localActiveBoard;
+		if (currentActive && (currentActive[0] !== boardRow || currentActive[1] !== boardCol)) {
+			return;
+		}
+
+		// make move
 		boards[boardRow][boardCol][row][col] = player;
 
+		// Check local board winner/draw and then ultimate winner
 		const boardWinner = checkWin(boards[boardRow][boardCol]);
 		if (boardWinner) {
 			wonBoards[boardRow][boardCol] = boardWinner;
 			ultimateWinner = checkUltimateWinner(wonBoards);
 		}
 
+		// get next active sub-board
+		// if the target sub-board is already won/drawn OR becomes full/drawn now, allow any board
+		const targetState = checkWin(boards[row][col]);
+		if (targetState && !wonBoards[row][col]) {
+			wonBoards[row][col] = targetState;
+		}
 		if (!wonBoards[row][col]) {
 			localActiveBoard = [row, col]; // next move must be in the corresponding board
 		} else {
 			localActiveBoard = null; // any board can be played next
 		}
 
+		// switch player and update state
 		player = player === "x" ? "o" : "x";
-
 		updateState(player, ultimateWinner ?? null);
 
 		//#endregion
@@ -88,7 +105,7 @@
 								winner={wonBoards[rowIndex][colIndex]}
 								{player}
 								isActive={isActive(rowIndex, colIndex)}
-								{canPlay}
+								canPlay={canPlay && isActive(rowIndex, colIndex) && !ultimateWinner}
 								updateState={(e) => handleMove(e, rowIndex, colIndex)}
 							/>
 						</div>

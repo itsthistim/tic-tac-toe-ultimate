@@ -112,6 +112,7 @@
 		player = newPlayer;
 		winner = newWinner;
 	}
+
 </script>
 
 <div class="game">
