@@ -43,6 +43,27 @@ export class Multiplayer {
 		});
 		const httpServer = createServer();
 
+		// ensure the server itself sets CORS headers for socket.io polling requests
+		httpServer.on("request", (req, res) => {
+			try {
+				const origin = (req.headers.origin as string) || "";
+				if (origin && allowedOrigins.includes(origin)) {
+					res.setHeader("Access-Control-Allow-Origin", origin);
+					res.setHeader("Access-Control-Allow-Credentials", "true");
+					res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+					res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Requested-By");
+				}
+
+				if (req.method === "OPTIONS") {
+					res.statusCode = 204; // No Content
+					res.end();
+					return;
+				}
+			} catch (e) {
+				console.error("Error setting CORS headers:", e);
+			}
+		});
+
 		this.io = new Server(httpServer, {
 			cors: {
 				origin: allowedOrigins,
