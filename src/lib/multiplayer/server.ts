@@ -21,7 +21,16 @@ export class Multiplayer {
 		const serverEndpoint = (process.env.PUBLIC_WS_ENDPOINT || "http://localhost").replace(/\/$/, "");
 		const serverUrl = `${serverEndpoint}:${port}`;
 		const clientOrigin = `${serverEndpoint}:${process.env.PUBLIC_CLIENT_PORT || 5173}`;
-		const allowedOrigins = Array.from(new Set(["https://tic-tac-toe.thistim.me", serverUrl, clientOrigin]));
+		const allowedOrigins = Array.from(
+			new Set([
+				"https://tic-tac-toe.thistim.me",
+				"https://wss.tic-tac-toe.thistim.me",
+				"wss://wss.tic-tac-toe.thistim.me",
+				"wss://tic-tac-toe.thistim.me",
+				serverUrl,
+				clientOrigin
+			])
+		);
 
 		console.info("Multiplayer config:", {
 			port,
