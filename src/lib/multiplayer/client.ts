@@ -14,7 +14,6 @@ export class MultiplayerClient {
 		const url = "https://wss.thistim.me";
 		console.info("client.ts: Connecting to the multiplayer server", url);
 		this.socket = io(url, {
-			withCredentials: true,
 			transports: ["polling", "websocket"]
 		});
 

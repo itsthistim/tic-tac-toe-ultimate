@@ -21,15 +21,15 @@ export class Multiplayer {
 		
 		const allowedOrigins = "*";
 
-		console.info("Multiplayer server starting on port 3031 with CORS disabled");
+		console.info("Multiplayer server starting on port 3031");
 
 		const httpServer = createServer();
 
 		this.io = new Server(httpServer, {
 			cors: {
-				origin: "*",
+				origin: "https://tic-tac-toe.thistim.me",
 				methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-				credentials: true
+				credentials: false
 			},
 			allowEIO3: true,
 			transports: ["polling", "websocket"]
