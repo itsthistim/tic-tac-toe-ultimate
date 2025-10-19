@@ -17,18 +17,21 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		// Use PUBLIC_* for local dev; ignore VITE_* to avoid picking up production values like 443
 		const port = Number(process.env.PUBLIC_WS_PORT || 5371);
-		const clientOrigin = `${process.env.PUBLIC_WS_ENDPOINT}:${process.env.PUBLIC_WS_PORT}` || "http://localhost:5173";
+		const serverEndpoint = (process.env.PUBLIC_WS_ENDPOINT || "http://localhost").replace(/\/$/, "");
+		const serverUrl = `${serverEndpoint}:${port}`;
+		const allowedOrigins = Array.from(new Set(["https://tic-tac-toe.thistim.me", serverUrl]));
+
 		console.info("Multiplayer config:", {
 			port,
-			clientOrigin
+			serverUrl,
+			allowedOrigins
 		});
 		const httpServer = createServer();
 
 		this.io = new Server(httpServer, {
 			cors: {
-				origin: ["https://tic-tac-toe.thistim.me", clientOrigin],
+				origin: allowedOrigins,
 				methods: ["GET", "POST"],
 				credentials: true
 			}
