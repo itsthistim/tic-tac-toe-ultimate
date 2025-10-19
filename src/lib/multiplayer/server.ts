@@ -21,46 +21,53 @@ export class Multiplayer {
 		const serverEndpoint = (process.env.PUBLIC_WS_ENDPOINT || "http://localhost").replace(/\/$/, "");
 		const serverUrl = `${serverEndpoint}:${port}`;
 		const clientOrigin = `${serverEndpoint}:${process.env.PUBLIC_CLIENT_PORT || 5173}`;
+
+		// Only include valid HTTP/HTTPS origins that browsers actually send
 		const allowedOrigins = Array.from(
 			new Set([
-				"https://tic-tac-toe.thistim.me",
-				"https://wss.tic-tac-toe.thistim.me",
-				"http://tic-tac-toe.thistim.me",
-				"http://wss.tic-tac-toe.thistim.me",
-				"wss://wss.tic-tac-toe.thistim.me",
-				"wss://tic-tac-toe.thistim.me",
-				"ws://wss.tic-tac-toe.thistim.me",
-				"ws://tic-tac-toe.thistim.me",
-				serverUrl,
-				clientOrigin
+				"https://tic-tac-toe.thistim.me", // Production frontend
+				clientOrigin, // Dev client (http://localhost:5173)
+				serverUrl // Dev server (http://localhost:3001)
 			])
 		);
 
 		console.info("Multiplayer config:", {
 			port,
 			serverUrl,
+			clientOrigin,
 			allowedOrigins
 		});
+
 		const httpServer = createServer();
 
-		// ensure the server itself sets CORS headers for socket.io polling requests
+		// Log incoming requests and ensure CORS headers for socket.io polling
 		httpServer.on("request", (req, res) => {
 			try {
 				const origin = (req.headers.origin as string) || "";
+				const url = req.url || "";
+
+				// Log all socket.io requests for debugging
+				if (url.startsWith("/socket.io/")) {
+					console.log(`[${new Date().toISOString()}] ${req.method} ${url} Origin: ${origin}`);
+				}
+
 				if (origin && allowedOrigins.includes(origin)) {
+					console.log("✓ Setting CORS headers for allowed origin:", origin);
 					res.setHeader("Access-Control-Allow-Origin", origin);
 					res.setHeader("Access-Control-Allow-Credentials", "true");
 					res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
 					res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Requested-By");
+				} else if (origin) {
+					console.log("✗ Origin not allowed:", origin, "Allowed:", allowedOrigins);
 				}
 
 				if (req.method === "OPTIONS") {
-					res.statusCode = 204; // No Content
+					res.statusCode = 204;
 					res.end();
 					return;
 				}
 			} catch (e) {
-				console.error("Error setting CORS headers:", e);
+				console.error("Error in request handler:", e);
 			}
 		});
 
@@ -73,7 +80,11 @@ export class Multiplayer {
 		});
 
 		httpServer.listen(port);
-		console.info("Multiplayer server is running on port", port);
+
+		console.info("Multiplayer server is running", {
+			serverUrl,
+			port
+		});
 
 		this.io.on("connection", (socket) => {
 			socket.on("join-room", (roomId: string) => {
