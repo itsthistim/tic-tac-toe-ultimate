@@ -1,4 +1,11 @@
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+// Load .env.development first (if present), then fallback to .env
+const devEnvPath = path.resolve(process.cwd(), ".env.development");
+if (fs.existsSync(devEnvPath)) {
+	dotenv.config({ path: devEnvPath });
+}
 dotenv.config();
 import { Server } from "socket.io";
 import { createServer } from "http";
@@ -10,12 +17,18 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const port = process.env.VITE_WS_PORT;
+		// Use PUBLIC_* for local dev; ignore VITE_* to avoid picking up production values like 443
+		const port = Number(process.env.PUBLIC_WS_PORT || 5371);
+		const clientOrigin = `${process.env.PUBLIC_WS_ENDPOINT}:${process.env.PUBLIC_WS_PORT}` || "http://localhost:5173";
+		console.info("Multiplayer config:", {
+			port,
+			clientOrigin
+		});
 		const httpServer = createServer();
 
 		this.io = new Server(httpServer, {
 			cors: {
-				origin: ["https://tic-tac-toe.thistim.me", "http://localhost:" + port],
+				origin: ["https://tic-tac-toe.thistim.me", clientOrigin],
 				methods: ["GET", "POST"],
 				credentials: true
 			}
