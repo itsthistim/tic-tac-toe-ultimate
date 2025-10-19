@@ -17,10 +17,11 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const port = Number(process.env.PUBLIC_WS_PORT || 5371);
+		const port = Number(process.env.PUBLIC_WS_PORT || 3001);
 		const serverEndpoint = (process.env.PUBLIC_WS_ENDPOINT || "http://localhost").replace(/\/$/, "");
 		const serverUrl = `${serverEndpoint}:${port}`;
-		const allowedOrigins = Array.from(new Set(["https://tic-tac-toe.thistim.me", serverUrl]));
+		const clientOrigin = `${serverEndpoint}:${process.env.PUBLIC_CLIENT_PORT || 5173}`;
+		const allowedOrigins = Array.from(new Set(["https://tic-tac-toe.thistim.me", serverUrl, clientOrigin]));
 
 		console.info("Multiplayer config:", {
 			port,
