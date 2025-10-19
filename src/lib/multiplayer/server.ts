@@ -17,13 +17,11 @@ export class Multiplayer {
 	private rooms = new Map<string, Room>();
 
 	constructor() {
-		const port = Number(process.env.PUBLIC_WS_PORT || 3031);
-		const serverEndpoint = (process.env.PUBLIC_WS_ENDPOINT || "http://localhost").replace(/\/$/, "");
-		
-		// prod: server on 3031), client on 443
-		// dev: server on 3031, client on 5173
+		const serverPort = Number(process.env.SERVER_PORT || 3031);
+		const publicEndpoint = (process.env.PUBLIC_WS_ENDPOINT || "http://localhost").replace(/\/$/, "");
+		const publicPort = Number(process.env.PUBLIC_WS_PORT || serverPort);
 		const clientOrigin = process.env.NODE_ENV === "production" 
-			? serverEndpoint
+			? publicEndpoint
 			: `http://localhost:${process.env.PUBLIC_CLIENT_PORT || 5173}`;
 
 		const allowedOrigins = Array.from(
@@ -31,13 +29,13 @@ export class Multiplayer {
 				"https://tic-tac-toe.thistim.me",
 				clientOrigin,
 				"http://localhost:5173",
-				"http://localhost:3031"
+				`http://localhost:${serverPort}`
 			])
 		);
 
-		console.info("Multiplayer config:", {
-			port,
-			serverEndpoint,
+		console.info("Multiplayer server starting:", {
+			serverEndpoint: publicEndpoint,
+			serverPort,
 			clientOrigin,
 			allowedOrigins
 		});
@@ -83,11 +81,11 @@ export class Multiplayer {
 			}
 		});
 
-		httpServer.listen(port);
+		httpServer.listen(serverPort);
 
 		console.info("Multiplayer server is running", {
-			serverEndpoint,
-			port,
+			serverEndpoint: publicEndpoint,
+			serverPort,
 			environment: process.env.NODE_ENV || "development"
 		});
 
