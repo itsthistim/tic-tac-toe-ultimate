@@ -19,21 +19,25 @@ export class Multiplayer {
 	constructor() {
 		const port = Number(process.env.PUBLIC_WS_PORT || 3001);
 		const serverEndpoint = (process.env.PUBLIC_WS_ENDPOINT || "http://localhost").replace(/\/$/, "");
-		const serverUrl = `${serverEndpoint}:${port}`;
-		const clientOrigin = `${serverEndpoint}:${process.env.PUBLIC_CLIENT_PORT || 5173}`;
+		
+		// prod: server on 3001), client on 443
+		// dev: server on 3001, client on 5173
+		const clientOrigin = process.env.NODE_ENV === "production" 
+			? serverEndpoint
+			: `http://localhost:${process.env.PUBLIC_CLIENT_PORT || 5173}`;
 
-		// Only include valid HTTP/HTTPS origins that browsers actually send
 		const allowedOrigins = Array.from(
 			new Set([
-				"https://tic-tac-toe.thistim.me", // Production frontend
-				clientOrigin, // Dev client (http://localhost:5173)
-				serverUrl // Dev server (http://localhost:3001)
+				"https://tic-tac-toe.thistim.me",
+				clientOrigin,
+				"http://localhost:5173",
+				"http://localhost:3001"
 			])
 		);
 
 		console.info("Multiplayer config:", {
 			port,
-			serverUrl,
+			serverEndpoint,
 			clientOrigin,
 			allowedOrigins
 		});
@@ -82,8 +86,9 @@ export class Multiplayer {
 		httpServer.listen(port);
 
 		console.info("Multiplayer server is running", {
-			serverUrl,
-			port
+			serverEndpoint,
+			port,
+			environment: process.env.NODE_ENV || "development"
 		});
 
 		this.io.on("connection", (socket) => {
