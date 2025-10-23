@@ -112,6 +112,7 @@ export class Multiplayer {
 	 * @param {Room} room - The room where the move is being made
 	 * @param {Move} data - The move data containing roomId, boardRow, boardCol, row, and col
 	 * @param {RoomMember} player - The player making the move
+	 * TODO make this work in singleplayer --> no rooms
 	 */
 	private makeMove(room: Room, data: Move, player: RoomMember): void {
 		room.board[data.boardRow][data.boardCol][data.row][data.col] = player.playerType;
@@ -137,6 +138,7 @@ export class Multiplayer {
 	/**
 	 * Handle player disconnect logic
 	 * @param {string} socketId - The socket ID of the disconnected player
+	 * TODO fix
 	 */
 	private handlePlayerDisconnect(socketId: string): void {
 		const room = Array.from(this.rooms.values()).find((r) => r.players.some((p) => p.socketId === socketId));
