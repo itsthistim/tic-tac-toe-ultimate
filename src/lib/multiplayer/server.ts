@@ -213,4 +213,8 @@ export class Multiplayer {
 	}
 }
 
-new Multiplayer();
+// Only start the server if this file is run directly
+import { fileURLToPath } from "url";
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+	new Multiplayer();
+}
