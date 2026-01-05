@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type Request, type Response } from "express";
 import { createServer } from "http";
 import path from "path";
 import { Multiplayer } from "./lib/multiplayer/server";
@@ -22,7 +22,7 @@ app.use(express.static(distPath));
 new Multiplayer(server);
 
 // Handle SPA routing - send all requests to index.html
-app.get(/(.*)/, (req, res) => {
+app.get(/(.*)/, (req: Request, res: Response) => {
 	res.sendFile(path.join(distPath, "index.html"));
 });
 
