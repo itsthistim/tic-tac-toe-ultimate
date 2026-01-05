@@ -9,6 +9,7 @@
 		"preview": "astro preview",
 		"tauri": "tauri",
 		"server": "tsx src/lib/multiplayer/server.ts",
+		"server:prod": "tsx src/server-entry.ts",
 		"client": "astro dev"
 	},
 	"dependencies": {
@@ -19,6 +20,7 @@
 		"astro": "^5.11.0",
 		"astro-icon": "^1.1.5",
 		"dotenv": "^17.2.1",
+		"express": "^5.2.1",
 		"socket.io": "^4.8.1",
 		"socket.io-client": "^4.8.1",
 		"svelte": "^5.35.4",

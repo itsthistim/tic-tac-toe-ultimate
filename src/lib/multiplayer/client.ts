@@ -11,7 +11,8 @@ export class MultiplayerClient {
 	private connectionStatusCallback?: (connected: boolean) => void;
 
 	constructor() {
-		const url = "https://wss.thistim.me";
+		const isDev = import.meta.env.DEV;
+		const url = import.meta.env.PUBLIC_WEBSOCKET_URL || (isDev ? "http://localhost:3031" : "/");
 		console.info("client.ts: Connecting to the multiplayer server", url);
 		this.socket = io(url, {
 			transports: ["polling", "websocket"]

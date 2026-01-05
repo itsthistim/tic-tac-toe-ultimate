@@ -8,7 +8,7 @@ if (fs.existsSync(devEnvPath)) {
 }
 dotenv.config();
 import { Server } from "socket.io";
-import { createServer } from "http";
+import { createServer, type Server as HttpServer } from "http";
 import { createEmptyUltimateBoard, checkWin, checkUltimateWinner } from "../utils";
 import type { Room, RoomMember, Move } from "../utils";
 
@@ -16,18 +16,18 @@ export class Multiplayer {
 	private io: Server;
 	private rooms = new Map<string, Room>();
 
-	constructor() {
-		const serverPort = 3031;
+	constructor(httpServer?: HttpServer) {
+		const serverPort = process.env.PORT || 3031;
 		
-		const allowedOrigins = "*";
+		const allowedOrigins = process.env.CORS_ORIGIN || "*";
 
-		console.info("Multiplayer server starting on port 3031");
+		console.info(`Multiplayer server starting on port ${serverPort}`);
 
-		const httpServer = createServer();
+		const server = httpServer || createServer();
 
-		this.io = new Server(httpServer, {
+		this.io = new Server(server, {
 			cors: {
-				origin: "https://tic-tac-toe.thistim.me",
+				origin: allowedOrigins,
 				methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 				credentials: false
 			},
@@ -35,8 +35,10 @@ export class Multiplayer {
 			transports: ["polling", "websocket"]
 		});
 
-		httpServer.listen(serverPort);
-		console.info("Multiplayer server running on port 3031");
+		if (!httpServer) {
+			server.listen(serverPort);
+			console.info(`Multiplayer server running on port ${serverPort}`);
+		}
 
 		this.io.on("connection", (socket) => {
 			socket.on("join-room", (roomId: string) => {
